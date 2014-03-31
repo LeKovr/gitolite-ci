@@ -5,7 +5,7 @@ ADMIN=$1
 
 echo "Setup for user $ADMIN"
 
-[ -d gitolite ] || git clone git://github.com/sitaramc/gitolite
+[ -d gitolite ] || git clone https://github.com/sitaramc/gitolite.git
 mkdir -p $HOME/bin
 gitolite/install -to $HOME/bin
 

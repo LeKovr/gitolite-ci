@@ -37,6 +37,6 @@ fi
 su - $USER
 cd
 
-[ -d gitolite-ci ] || git clone git@github.com:LeKovr/gitolite-ci.git
+[ -d gitolite-ci ] || git clone https://github.com/LeKovr/gitolite-ci.git
 . gitolite-ci/remote/init.sh $ADMIN
 
