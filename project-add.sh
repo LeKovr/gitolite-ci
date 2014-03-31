@@ -21,10 +21,10 @@ grep $PRJ $CFG || cat >> $CFG <<EOF
 
 repo    $PRJ
         RW+     =   $ADMIN
-        config hooks.mailinglist = "$WATCHERS"
-        config hooks.emailprefix = "[$PRJ]"
-        config hooks.deploy_root       = "$ROOT/$PRJ"
-        config hooks.deploy_use_branch = "1"
+        config hooks.mailinglist  = "$WATCHERS"
+        config hooks.emailprefix  = "[$PRJ]"
+        config hooks.deployroot   = "$ROOT/$PRJ"
+        config hooks.deploybranch = "1"
 EOF
 
 git commit -am "$PRJ project added"

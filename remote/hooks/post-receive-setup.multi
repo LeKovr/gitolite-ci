@@ -7,8 +7,8 @@
 read oldrev newrev ref
 
 # The deployed directory (the running site)
-path=$(git config hooks.deploy_root)
-use_branch=$(git config hooks.deploy_use_branch)
+path=$(git config hooks.deployroot)
+use_branch=$(git config hooks.deploybranch)
 
 ## Where to store the log information about the updates
 LOGFILE=./post-receive.log
