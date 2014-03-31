@@ -24,6 +24,6 @@ if [[ "$path" ]] ; then
   [ -d "$path" ] || mkdir -p "$path"
   GIT_WORK_TREE=$path git checkout -f
   pushd $path > /dev/null
-  [[ -f "setup.sh" ]] && bash setup.sh
+  [[ -f "setup.sh" ]] && bash setup.sh $branch
   popd  > /dev/null
 fi
