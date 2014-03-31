@@ -11,7 +11,11 @@ gitolite/install -to $HOME/bin
 
 bin/gitolite setup -pk $ADMIN.pub
 
-cp gitolite-ci/remote/hooks/* .gitolite/hooks/common/
+for f in gitolite-ci/remote/hooks/* ; do 
+  name=${f##*/}
+  [ -e .gitolite/hooks/common/$name ] || ln -s $PWD/$f .gitolite/hooks/common/$name
+done
+
 bin/gitolite setup --hooks-only
 
 sed -i "s/\(GIT_CONFIG_KEYS *=> *\)''/\1'.*'/" .gitolite.rc

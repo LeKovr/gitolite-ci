@@ -7,7 +7,8 @@
 read oldrev newrev ref
 
 # The deployed directory (the running site)
-path=$(git config hooks.distropath)
+path=$(git config hooks.deploy_root)
+use_branch=$(git config hooks.deploy_use_branch)
 
 ## Where to store the log information about the updates
 LOGFILE=./post-receive.log
@@ -18,6 +19,7 @@ echo "Work on branch: $branchname"
 echo "[$(date +"%F %T")] - Old SHA: $oldrev New SHA: $newrev Branch Name: $branchname" >> $LOGFILE
 
 if [[ "$path" ]] ; then
+  [[ "$use_branch" ]] && path="$path/$branch"
   echo "Setup distro in $path"
   [ -d "$path" ] || mkdir -p "$path"
   GIT_WORK_TREE=$path git checkout -f
