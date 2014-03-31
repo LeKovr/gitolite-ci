@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # git admin user
-ADMIN=$1
+read ADMIN
 
 echo "Setup for user $ADMIN"
 

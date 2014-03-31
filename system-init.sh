@@ -6,15 +6,13 @@
 USER=git
 
 # git admin
-ADMIN=$1
-[[ "$ADMIN" ]] || ADMIN=op
-
+ADMIN=op
 
 # Cloud host default key
 KEY0=/root/.ssh/authorized_keys
 
 # Dish host  default key
-KEY1=/home/op/.ssh/authorized_keys
+KEY1=/home/app/op/.ssh/authorized_keys
 
 
 apt-get -y install git-core moreutils
@@ -34,9 +32,10 @@ elif [ -f $KEY1 ] ; then
 else
   echo "WARNING: ssh key not found"
 fi
+echo $ADMIN > /home/$USER/admin.name
+
 su - $USER
 cd
 
 [ -d gitolite-ci ] || git clone https://github.com/LeKovr/gitolite-ci.git
-. gitolite-ci/remote/init.sh $ADMIN
-
+. gitolite-ci/remote/init.sh < admin.name
