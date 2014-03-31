@@ -9,10 +9,16 @@ echo "Setup for user $ADMIN"
 mkdir -p $HOME/bin
 gitolite/install -to $HOME/bin
 
-cp gitolite-ci/remote/hooks/* .gitolite/hooks/common/
-
 bin/gitolite setup -pk $ADMIN.pub
 
-#bin/gitolite setup --hooks-only
+cp gitolite-ci/remote/hooks/* .gitolite/hooks/common/
+bin/gitolite setup --hooks-only
+
 sed -i "s/\(GIT_CONFIG_KEYS *=> *\)''/\1'.*'/" .gitolite.rc
 
+cat <<EOF
+Congratulations!
+Your CI system on gitolite is ready
+Use project-add.sh to add projects
+
+EOF
