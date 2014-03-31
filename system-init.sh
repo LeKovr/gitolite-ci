@@ -2,8 +2,20 @@
 # Use:
 # ssh -t root@example.com 'bash -s' < system-init.sh
 
+# host user - files owner
 USER=git
-KEY=/root/.ssh/authorized_keys
+
+# git admin
+ADMIN=$1
+[[ "$ADMIN" ]] || ADMIN=op
+
+
+# Cloud host default key
+KEY0=/root/.ssh/authorized_keys
+
+# Dish host  default key
+KEY1=/home/op/.ssh/authorized_keys
+
 
 apt-get -y install git-core moreutils
 
@@ -15,11 +27,16 @@ grep -qe "^$USER:" /etc/passwd || {
   chmod 400 /etc/sudoers.d/$USER
 }
 
-cp $KEY /home/$USER/op.pub
-
+if [ -f $KEY0 ] ; then
+  cp $KEY0 /home/$USER/$ADMIN.pub
+elif [ -f $KEY1 ] ; then
+  cp $KEY1 /home/$USER/$ADMIN.pub
+else
+  echo "WARNING: ssh key not found"
+fi
 su - $USER
 cd
 
-#[ -d gitolite-ci ] || git clone git://github.com/lekovr/gitolite-ci
-#. gitolite-ci/remote/init.sh
+[ -d gitolite-ci ] || git clone git@github.com:LeKovr/gitolite-ci.git
+. gitolite-ci/remote/init.sh $ADMIN
 
