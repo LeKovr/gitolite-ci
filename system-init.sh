@@ -26,7 +26,7 @@ grep -qe "^$USER:" /etc/passwd || {
   # reload nginx with /usr/sbin/nginx -s reload
   echo "$USER ALL=NOPASSWD:/usr/sbin/nginx" >> /etc/sudoers.d/$USER
 
-  chmod 400 /etc/sudoers.d/$USER
+  chmod 440 /etc/sudoers.d/$USER
 }
 
 if [ -f $KEY0 ] ; then
