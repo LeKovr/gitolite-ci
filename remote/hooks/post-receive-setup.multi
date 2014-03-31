@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# http://toroid.org/ams/git-website-howto
+# http://www.sitepoint.com/one-click-app-deployment-server-side-git-hooks/
+
+## store the arguments given to the script
+read oldrev newrev ref
+
+# The deployed directory (the running site)
+path=$(git config hooks.distropath)
+
+## Where to store the log information about the updates
+LOGFILE=./post-receive.log
+
+branchname=${ref#refs/heads/}
+echo "Work on branch: $branchname"
+
+echo -e "Received Push Request at $( date +%F )" >> $LOGFILE
+echo " - Old SHA: $oldrev New SHA: $newrev Branch Name: $branchname" >> $LOGFILE
+
+if [[ "$path" ]] && [[ -d "$path" ]] ; then
+  echo "Setup distro"
+  GIT_WORK_TREE=$path git checkout -f
+  pushd $path > /dev/null
+  [[ -f "setup.sh" ]] && bash setup.sh
+  popd  > /dev/null
+fi
