@@ -21,7 +21,11 @@ grep -qe "^$USER:" /etc/passwd || {
   useradd -m $USER
   usermod -L $USER
 
+  # allow restart supervisord childs
   echo "$USER ALL=NOPASSWD:/usr/bin/supervisorctl" > /etc/sudoers.d/$USER
+  # reload nginx with /usr/sbin/nginx -s reload
+  echo "$USER ALL=NOPASSWD:/usr/sbin/nginx" >> /etc/sudoers.d/$USER
+
   chmod 400 /etc/sudoers.d/$USER
 }
 

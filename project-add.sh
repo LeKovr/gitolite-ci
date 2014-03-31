@@ -30,3 +30,10 @@ git commit -am "$PRJ project added"
 git push
 
 popd
+
+cat <<EOF
+Project $PRG setup complete.
+Clone it via:
+  git clone git@localhost:$PRJ
+EOF
+

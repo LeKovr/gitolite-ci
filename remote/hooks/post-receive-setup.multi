@@ -15,11 +15,11 @@ LOGFILE=./post-receive.log
 branchname=${ref#refs/heads/}
 echo "Work on branch: $branchname"
 
-echo -e "Received Push Request at $( date +%F )" >> $LOGFILE
-echo " - Old SHA: $oldrev New SHA: $newrev Branch Name: $branchname" >> $LOGFILE
+echo "[$(date +"%F %T")] - Old SHA: $oldrev New SHA: $newrev Branch Name: $branchname" >> $LOGFILE
 
-if [[ "$path" ]] && [[ -d "$path" ]] ; then
-  echo "Setup distro"
+if [[ "$path" ]] ; then
+  echo "Setup distro in $path"
+  [ -d "$path" ] || mkdir -p "$path"
   GIT_WORK_TREE=$path git checkout -f
   pushd $path > /dev/null
   [[ -f "setup.sh" ]] && bash setup.sh
