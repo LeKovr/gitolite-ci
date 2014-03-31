@@ -2,5 +2,5 @@
 
 echo "HOOK DIR: $PWD"
 
-pee post-receive-*.multi
+pee hooks/post-receive-*.multi
 # pee $GL_ADMINDIR/common/hooks/post-receive-*.multi
