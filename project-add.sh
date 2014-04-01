@@ -6,18 +6,22 @@ ROOT=/home/app/srv
 
 ADMIN="op"
 WATCHERS="jean@jast.ru"
+CFGHOST=www3.el-f.pro
 
 [[ "$PRJ" ]] || { echo "Usage: $0 <PROGECT_NAME>" ; exit 1 ; }
+
+[ -d $CFGHOST ] || mkdir $CFGHOST
+pushd $CFGHOST
 
 if [ -d gitolite-admin ] ; then
   pushd gitolite-admin
   git pull
 else
-  git clone git@localhost:gitolite-admin
+  git clone git@$CFGHOST:gitolite-admin
   pushd gitolite-admin
 fi
 
-grep $PRJ $CFG || cat >> $CFG <<EOF
+grep -q "repo +$PRJ" $CFG || cat >> $CFG <<EOF
 
 repo    $PRJ
         RW+     =   $ADMIN
@@ -35,6 +39,6 @@ popd
 cat <<EOF
 Project $PRG setup complete.
 Clone it via:
-  git clone git@localhost:$PRJ
+  git clone git@$CFGHOST:$PRJ
 EOF
 
