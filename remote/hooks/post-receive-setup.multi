@@ -21,7 +21,7 @@ echo "[$(date +"%F %T")] - Old SHA: $oldrev New SHA: $newrev Branch Name: $branc
 if [[ "$path" ]] ; then
   [[ "$use_branch" ]] && path="$path/$branchname"
   echo "Setup distro in $path"
-  [ -d "$path" ] || mkdir -p "$path"
+  [ -d "$path" ] || mkdir -p -m 766 "$path"
   GIT_WORK_TREE=$path git checkout -f
   pushd $path > /dev/null
   [[ -f "setup.sh" ]] && bash setup.sh $branchname

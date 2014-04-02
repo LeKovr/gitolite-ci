@@ -2,16 +2,15 @@
 
 PRJ=$1
 CFG=conf/gitolite.conf
-ROOT=/home/app/srv
+APPROOT=/home/app/srv
 
-ADMIN="op"
-WATCHERS="jean@jast.ru"
-CFGHOST=www3.el-f.pro
+. gitolite-ci.conf
 
 [[ "$PRJ" ]] || { echo "Usage: $0 <PROGECT_NAME>" ; exit 1 ; }
 
-[ -d $CFGHOST ] || mkdir $CFGHOST
-pushd $CFGHOST
+LOCALROOT=sites/$CFGHOST
+[ -d $LOCALROOT ] || mkdir -p $LOCALROOT
+pushd $LOCALROOT
 
 if [ -d gitolite-admin ] ; then
   pushd gitolite-admin
@@ -27,7 +26,7 @@ repo    $PRJ
         RW+     =   $ADMIN
         config hooks.mailinglist  = "$WATCHERS"
         config hooks.emailprefix  = "[$PRJ]"
-        config hooks.deployroot   = "$ROOT/$PRJ"
+        config hooks.deployroot   = "$APPROOT/$PRJ"
         config hooks.deploybranch = "1"
 EOF
 
