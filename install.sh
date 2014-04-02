@@ -32,12 +32,13 @@ sudo usermod -L $GITUSER
 
 # Enable sudo for $GITUSER
 [ -f /etc/sudoers.d/$GITUSER ] || {
-  sudo cat > /etc/sudoers.d/$GITUSER <<-EOF
+  sudo bash -c "cat >/etc/sudoers.d/$NEWUSER <<-EOF
 	$NEWUSER ALL=NOPASSWD:/usr/bin/supervisorctl
 	$NEWUSER ALL=NOPASSWD:/usr/sbin/nginx
 	$NEWUSER ALL=NOPASSWD:/usr/bin/docker
 	$NEWUSER ALL=($NEWUSER) NOPASSWD:ALL
 	EOF
+  "
   sudo chmod 440 /etc/sudoers.d/$GITUSER
 }
 
@@ -55,7 +56,7 @@ sudo chmod ug+w $APPROOT
 
 # Setup rest as $GITUSER
 
-sudo su - $GITUSER
+sudo -E su - $GITUSER
 cd
 
 [ -d gitolite-ci ] || git clone https://github.com/LeKovr/gitolite-ci.git
