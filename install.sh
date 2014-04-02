@@ -23,7 +23,7 @@ sudo apt-get -y install git-core moreutils ssmtp
 
 # host user - files owner
 GITUSER=git
-HOMEDIR=/home/app/$GITUSER
+HOMEDIR=/home/$GITUSER
 
 # Create user $GITUSER
 grep -qe "^$GITUSER:" /etc/passwd || sudo useradd -d $HOMEDIR -m -r -s /bin/bash -Gwww-data -gusers $GITUSER
