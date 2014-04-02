@@ -56,7 +56,7 @@ sudo chmod ug+w $APPROOT
 # Setup rest as $GITUSER
 pushd $HOMEDIR
 
-[ -d gitolite-ci ] || git clone https://github.com/LeKovr/gitolite-ci.git
+[ -d gitolite-ci ] || sudo sudo -u $GITUSER git clone https://github.com/LeKovr/gitolite-ci.git
 echo $APPROOT/$USER.pub | sudo sudo -u $GITUSER bash gitolite-ci/remote/init.sh
 
 rm $APPROOT/$USER.pub
