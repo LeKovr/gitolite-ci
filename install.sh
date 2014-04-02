@@ -15,7 +15,7 @@ dpkg -s lxc-docker > /dev/null 2>&1 || {
 }
 
 # Install gitolite deps
-apt-get -y install git-core moreutils ssmtp
+sudo apt-get -y install git-core moreutils ssmtp
 
 # -----------------
 # Setup gitolite-ci
@@ -26,15 +26,13 @@ GITUSER=git
 HOMEDIR=/home/app/$GITUSER
 
 # Create user $GITUSER
-grep -qe "^$GITUSER:" /etc/passwd || useradd -d $HOMEDIR -m -r -s /bin/bash -Gwww-data -gusers $GITUSER
-usermod -L $GITUSER
+grep -qe "^$GITUSER:" /etc/passwd || sudo useradd -d $HOMEDIR -m -r -s /bin/bash -Gwww-data -gusers $GITUSER
+sudo usermod -L $GITUSER
 
-# Setup current user's name & key as gitolite admin
-$HOMEDIR/$USER.pub || cat ~/.ssh/authorized_keys | head -1 > $HOMEDIR/$USER.pub
 
 # Enable sudo for $GITUSER
 [ -f /etc/sudoers.d/$GITUSER ] || {
-  cat > /etc/sudoers.d/$ITUSER <<-EOF
+  cat > /etc/sudoers.d/$GITUSER <<-EOF
 	$NEWUSER ALL=NOPASSWD:/usr/bin/supervisorctl
 	$NEWUSER ALL=NOPASSWD:/usr/sbin/nginx
 	$NEWUSER ALL=NOPASSWD:/usr/bin/docker
@@ -52,10 +50,16 @@ APPROOT=/home/app/srv
 chown $GITUSER:www-data $APPROOT
 chmod ug+w $APPROOT
 
+# Setup current user's name & key as gitolite admin
+[ -f $APPROOT/$USER.pub ] || cat ~/.ssh/authorized_keys | head -1 > $APPROOT/$USER.pub
+
 # Setup rest as $GITUSER
 
-su - $GITUSER
+sudo su - $GITUSER
 cd
 
 [ -d gitolite-ci ] || git clone https://github.com/LeKovr/gitolite-ci.git
 echo $USER | . gitolite-ci/remote/init.sh
+
+exit
+rm $APPROOT/$USER.pub
