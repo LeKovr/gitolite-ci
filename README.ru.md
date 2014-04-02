@@ -1,33 +1,29 @@
 gitolite-ci
 ===========
 
-Шелл-скрипты для реализации понятия "Непрерывная интеграция" на базе gitolite
+Шелл-скрипты для реализации на базе gitolite понятия "Непрерывная интеграция" 
 
 Подготовка
 ----------
 
-### Create cloud server
+1. [Создать облачный сервер]()
+2. [Создать ключи и поместить их на сервер]
+3. Обновить сервер по рецептам [dish](https://github.com/LeKovr/dish) согласно [инструкции](https://github.com/LeKovr/dish/blob/master/README.ru.md#%D0%A1%D0%B5%D1%80%D0%B2%D0%B5%D1%80-%D0%B2-%D0%BE%D0%B1%D0%BB%D0%B0%D0%BA%D0%B5)
 
-Hostname will be used as mail domain.
+Установка на сервере
+--------------------
 
-### Generate keys
+4. Авторизоваться пользователем
+5. Выполнить
+    curl -s https://raw.githubusercontent.com/LeKovr/gitolite-ci/master/install.sh | bash
 
-### Copy keys to server
+Использование
+-------------
 
-Usage
------
+### Конфигурация сервера
 
-### Install 
 
-Login as root via key and run
-
-    curl https://raw.github.com/lekovr/gitolite-ci/system-init.sh | bash -s YOUR@MAIL ADMIN GIT
-
-Where
-
-* *YOUR@MAIL* - The person who gets all mail from server
-* *ADMIN* - Username to login as root
-* *GIT* - Username to interact with gitolite-ci
+### Конфигурация локальной копии
 
 ### Add project
 

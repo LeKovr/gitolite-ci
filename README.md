@@ -6,13 +6,10 @@ Scripts to make Continuous Integration with gitolite
 Prepare
 -------
 
-### Create cloud server
-
-Hostname will be used as mail domain.
-
-### Generate keys
-
-### Copy keys to server
+1. Create cloud server
+2. Generate RSA keys
+3. Copy keys to server
+4. Update server with [dish](https://github.com/LeKovr/dish) [see](https://github.com/LeKovr/dish/blob/master/README.ru.md#%D0%A1%D0%B5%D1%80%D0%B2%D0%B5%D1%80-%D0%B2-%D0%BE%D0%B1%D0%BB%D0%B0%D0%BA%D0%B5)
 
 Usage
 -----
@@ -21,13 +18,12 @@ Usage
 
 Login as root via key and run
 
-    curl https://raw.github.com/lekovr/gitolite-ci/system-init.sh | bash -s YOUR@MAIL ADMIN GIT
+    curl https://raw.githubusercontent.com/LeKovr/gitolite-ci/master/install.sh | bash
 
-Where
 
-* *YOUR@MAIL* - The person who gets all mail from server
-* *ADMIN* - Username to login as root
-* *GIT* - Username to interact with gitolite-ci
+What will be done:
+
+1. 
 
 ### Add project
 
