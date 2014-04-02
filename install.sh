@@ -32,13 +32,13 @@ sudo usermod -L $GITUSER
 
 # Enable sudo for $GITUSER
 [ -f /etc/sudoers.d/$GITUSER ] || {
-  cat > /etc/sudoers.d/$GITUSER <<-EOF
+  sudo cat > /etc/sudoers.d/$GITUSER <<-EOF
 	$NEWUSER ALL=NOPASSWD:/usr/bin/supervisorctl
 	$NEWUSER ALL=NOPASSWD:/usr/sbin/nginx
 	$NEWUSER ALL=NOPASSWD:/usr/bin/docker
 	$NEWUSER ALL=($NEWUSER) NOPASSWD:ALL
 	EOF
-  chmod 440 /etc/sudoers.d/$GITUSER
+  sudo chmod 440 /etc/sudoers.d/$GITUSER
 }
 
 # Setup app deploy root
@@ -46,9 +46,9 @@ sudo usermod -L $GITUSER
 # Deploy root
 APPROOT=/home/app/srv
 
-[ -d $APPROOT ] || mkdir -p $APPROOT
-chown $GITUSER:www-data $APPROOT
-chmod ug+w $APPROOT
+[ -d $APPROOT ] || sudo mkdir -p $APPROOT
+sudo chown $GITUSER:www-data $APPROOT
+sudo chmod ug+w $APPROOT
 
 # Setup current user's name & key as gitolite admin
 [ -f $APPROOT/$USER.pub ] || cat ~/.ssh/authorized_keys | head -1 > $APPROOT/$USER.pub
@@ -59,7 +59,7 @@ sudo su - $GITUSER
 cd
 
 [ -d gitolite-ci ] || git clone https://github.com/LeKovr/gitolite-ci.git
-echo $USER | . gitolite-ci/remote/init.sh
+echo $APPROOT/$USER.pub | . gitolite-ci/remote/init.sh
 
 exit
 rm $APPROOT/$USER.pub

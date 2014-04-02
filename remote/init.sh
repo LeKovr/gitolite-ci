@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # git admin user
-read ADMIN
+read KEYFILE
 
-echo "Setup gitolite for user $ADMIN"
+echo "Setup gitolite for admin key $KEYFILE"
+echo "in dir $PWD"
 
 [ -d gitolite ] || git clone https://github.com/sitaramc/gitolite.git
 mkdir -p $HOME/bin
 gitolite/install -to $HOME/bin
 
-bin/gitolite setup -pk $ADMIN.pub
+bin/gitolite setup -pk $KEYFILE
 
 for f in gitolite-ci/remote/hooks/* ; do 
   name=${f##*/}
