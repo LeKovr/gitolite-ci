@@ -7,8 +7,8 @@ echo "Setup gitolite for admin key $KEYFILE"
 echo "in dir $PWD"
 
 [ -d gitolite ] || git clone https://github.com/sitaramc/gitolite.git
-mkdir -p $HOME/bin
-gitolite/install -to $HOME/bin
+[ -d bin ] || mkdir bin
+gitolite/install -to bin
 
 bin/gitolite setup -pk $KEYFILE
 

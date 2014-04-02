@@ -29,14 +29,13 @@ HOMEDIR=/home/$GITUSER
 grep -qe "^$GITUSER:" /etc/passwd || sudo useradd -d $HOMEDIR -m -r -s /bin/bash -Gwww-data -gusers $GITUSER
 sudo usermod -L $GITUSER
 
-
 # Enable sudo for $GITUSER
 [ -f /etc/sudoers.d/$GITUSER ] || {
-  sudo bash -c "cat >/etc/sudoers.d/$NEWUSER <<-EOF
-	$NEWUSER ALL=NOPASSWD:/usr/bin/supervisorctl
-	$NEWUSER ALL=NOPASSWD:/usr/sbin/nginx
-	$NEWUSER ALL=NOPASSWD:/usr/bin/docker
-	$NEWUSER ALL=($NEWUSER) NOPASSWD:ALL
+  sudo bash -c "cat >/etc/sudoers.d/$GITUSER <<-EOF
+	$GITUSER ALL=NOPASSWD:/usr/bin/supervisorctl
+	$GITUSER ALL=NOPASSWD:/usr/sbin/nginx
+	$GITUSER ALL=NOPASSWD:/usr/bin/docker
+	$GITUSER ALL=($GITUSER) NOPASSWD:ALL
 	EOF
   "
   sudo chmod 440 /etc/sudoers.d/$GITUSER
@@ -55,12 +54,9 @@ sudo chmod ug+w $APPROOT
 [ -f $APPROOT/$USER.pub ] || cat ~/.ssh/authorized_keys | head -1 > $APPROOT/$USER.pub
 
 # Setup rest as $GITUSER
-
-sudo -E su - $GITUSER
-cd
+pushd $HOMEDIR
 
 [ -d gitolite-ci ] || git clone https://github.com/LeKovr/gitolite-ci.git
-echo $APPROOT/$USER.pub | . gitolite-ci/remote/init.sh
+echo $APPROOT/$USER.pub | sudo sudo -u $GITUSER bash gitolite-ci/remote/init.sh
 
-exit
 rm $APPROOT/$USER.pub
