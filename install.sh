@@ -6,7 +6,7 @@
 
 
 # Install docker if none
-dpkg -s lxc-docker >/dev/null 2>&1 {
+dpkg -s lxc-docker >/dev/null 2>&1 || {
   curl -s https://get.docker.io/ubuntu/ | sudo sh
   # allow conect between containers
   # sed -i "/^DEFAULT_FORWARD_POLICY=\"DROP\"/c DEFAULT_FORWARD_POLICY=\"ACCEPT\"" /etc/default/ufw
