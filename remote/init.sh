@@ -17,7 +17,7 @@ for f in gitolite-ci/remote/hooks/* ; do
   [ -e .gitolite/hooks/common/$name ] || ln -s $PWD/$f .gitolite/hooks/common/$name
 done
 
-bin/gitolite setup --hooks-only
+HOME=$PWD bin/gitolite setup --hooks-only
 
 sed -i "s/\(GIT_CONFIG_KEYS *=> *\)''/\1'.*'/" .gitolite.rc
 
