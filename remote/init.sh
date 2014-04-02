@@ -8,7 +8,7 @@ echo "in dir $PWD"
 
 [ -d gitolite ] || git clone https://github.com/sitaramc/gitolite.git
 [ -d bin ] || mkdir bin
-gitolite/install -to bin
+gitolite/install -to $PWD/bin
 
 bin/gitolite setup -pk $KEYFILE
 
