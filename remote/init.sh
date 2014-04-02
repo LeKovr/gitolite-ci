@@ -10,7 +10,7 @@ echo "in dir $PWD"
 [ -d bin ] || mkdir bin
 gitolite/install -to $PWD/bin
 
-bin/gitolite setup -pk $KEYFILE
+HOME=$PWD bin/gitolite setup -pk $KEYFILE
 
 for f in gitolite-ci/remote/hooks/* ; do 
   name=${f##*/}
