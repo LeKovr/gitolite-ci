@@ -4,13 +4,32 @@ PRJ=$1
 CFG=conf/gitolite.conf
 APPROOT=/home/app/srv
 
+[ -f gitolite-ci.conf ] || {
+  echo "No gitolite-ci.conf in current dir. Generating..."
+  echo "Fill it and run me again"
+  cat > gitolite-ci.conf <<EOF
+# gitolite-ci host config
+
+# ssh hostname
+CFGHOST=example.com
+
+# admin username
+ADMIN="op"
+
+# system email recipient
+WATCHERS="admin@example.com"
+
+EOF
+  exit 1
+
+}
 . gitolite-ci.conf
 
 [[ "$PRJ" ]] || { echo "Usage: $0 <PROGECT_NAME>" ; exit 1 ; }
 
-LOCALROOT=sites/$CFGHOST
-[ -d $LOCALROOT ] || mkdir -p $LOCALROOT
-pushd $LOCALROOT
+#LOCALROOT=sites/$CFGHOST
+#[ -d $LOCALROOT ] || mkdir -p $LOCALROOT
+#pushd $LOCALROOT
 
 if [ -d gitolite-admin ] ; then
   pushd gitolite-admin
