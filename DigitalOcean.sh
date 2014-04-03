@@ -67,7 +67,7 @@ cat <<EOF
 Если этот ip-адрес уже был зарегистрирован в DNS за именем $hname,
 то работа скрипта продолжится автоматически по факту загрузки (успешного пинга) капли.
 
-Иначе - посмотрите в кабинете ip капли, зарегистрируйте его в DNS и повторите запуск скрпта после обновления зоны
+Иначе - посмотрите в кабинете ip капли, зарегистрируйте его в DNS и повторите запуск скрипта после обновления зоны
 
 EOF
 
@@ -185,19 +185,30 @@ git push origin master
 
   read -p "[Hit Enter to continue]" X
 
-ssh op@$hname sudo docker logs $(docker ps -q)
+ssh op@$hname sudo docker logs $(sudo docker ps -q)
 
   read -p "[Hit Enter to continue]" X
-# Сохраним приватный ключ opendkim, который сгенерен при первом старте контейнера
 
-scp op@$hname:/home/app/srv/mail/private.key .
-git add .
-git ci -am "added private.key"
-git push
+# Если у нас нет ключа для подписи DKIM - используем сформированный при первом старте контейнера
+# ssh op@$hname sudo cat /home/app/srv/mail/private.key > private.key
+# git add private.key
+# git ci -am "added private.key"
+# git push
 
-  read -p "[Hit Enter to continue]" X
+# Если ключ сформирован ранее, добавим его в проект
+# git add private.key
+# git ci -am "added private.key"
+# git push
+# и зарегистрируем его, залогинившись в контейнер mail
+#  ssh -p 32 op@$hname sudo cp -f /home/app/srv/mail/master/private.key /home/app/srv/mail/private.key
+#  ssh -p 32 op@$hname sudo chown opendkim /home/app/srv/mail/private.key
+
+# Проверим, что почта работает
+#  echo "# t1" >> setup.sh
+#  git ci -am test1
+#  git push
+
 ##########################################################################################
-
 
 
 # TODO: управление DNS 

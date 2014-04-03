@@ -41,6 +41,13 @@ sudo usermod -L $GITUSER
   sudo chmod 440 /etc/sudoers.d/$GITUSER
 }
 
+# Setup ssmtp
+[ -L /etc/ssmtp/ssmtp.conf ] || {
+  # делаем символьную ссылку на файл, поторый будет сформирован пользователем git при старте контейнера mail
+  sudo mv /etc/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf.pre
+  sudo ln -s /home/app/srv/mail/ssmtp.conf /etc/ssmtp/ssmtp.conf 
+}
+
 # Setup app deploy root
 
 # Deploy root
