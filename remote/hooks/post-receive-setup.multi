@@ -19,9 +19,10 @@ echo "Work on branch: $branchname"
 echo "[$(date +"%F %T")] - Old SHA: $oldrev New SHA: $newrev Branch Name: $branchname" >> $LOGFILE
 
 if [[ "$path" ]] ; then
+  [ -d "$path" ] || mkdir -p -m 755 "$path"
   [[ "$use_branch" ]] && path="$path/$branchname"
   echo "Setup distro in $path"
-  [ -d "$path" ] || mkdir -p -m 755 "$path"
+  [ -d "$path" ] || mkdir -m 755 "$path"
   GIT_WORK_TREE=$path git checkout -f $branchname
   pushd $path > /dev/null
   [[ -f "setup.sh" ]] && bash setup.sh $branchname
