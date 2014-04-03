@@ -16,7 +16,7 @@ CFGHOST=example.com
 # admin username
 ADMIN="op"
 
-# system email recipient
+# gitolite notification email(s)
 WATCHERS="admin@example.com"
 
 EOF

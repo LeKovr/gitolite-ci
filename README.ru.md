@@ -16,7 +16,7 @@ gitolite-ci
 4. Авторизоваться пользователем
 5. Выполнить
 
-    curl -s https://raw.githubusercontent.com/LeKovr/gitolite-ci/master/install.sh | sudo bash
+    curl -s https://raw.githubusercontent.com/LeKovr/gitolite-ci/master/install.sh | bash
 
 Использование
 -------------
