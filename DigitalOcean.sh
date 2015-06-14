@@ -12,7 +12,9 @@ api_key=*****
 ssh_key=00000
 
 # Имя хоста капли
-hname="cloud1.example.ru"
+hname="cloud1.tld"
+
+watcher="admin@tld"
 
 # Файл DigitalOcean.conf - конец
 # ----------------------------------------------------------------
@@ -26,7 +28,9 @@ hname="cloud1.example.ru"
 # , "regions":[1,2,3,4,5,6],"region_slugs":["nyc1","ams1","sfo1","nyc2","ams2","sgp1"]}
 # {"id":1505447,"name":"Ubuntu 12.04.3 x64","slug":"ubuntu-12-04-x64","distribution":"Ubuntu","public":true
 # , "regions":[1,2,3,4,5,6],"region_slugs":["nyc1","ams1","sfo1","nyc2","ams2","sgp1"]}
-image_id=1505447
+# {"id":11851919,"name":"Docker 1.6.2 on 14.04","slug":"docker","distribution":"Ubuntu","public":true,
+# "regions":[1,2,3,4,5,6,7,8,9,10],"region_slugs":["nyc1","ams1","sfo1","nyc2","ams2","sgp1","lon1","nyc3","ams3","fra1"]},
+image_id=11851919
 
 #GET "https://api.digitalocean.com/regions/?client_id=$client_id&api_key=$api_key"
 # {"id":5,"name":"Amsterdam 2","slug":"ams2"}
@@ -79,17 +83,91 @@ while true; do ping -c1 $hname > /dev/null && break; done
 echo "OK"
   read -p "[Hit Enter to continue]" X
 
+# У новой капли новый ECDSA key
+# надо удалить старый, если есть
+ssh-keygen -f ~/.ssh/known_hosts -R $hname
+
 # RSA ключ текущего пользователя помещен в каплю при ее создании, поэтому можем логиниться
 
 ssh -t root@$hname 'bash -s' << EOF
-# обновим пакеты
-curl -s https://raw.githubusercontent.com/LeKovr/dish/master/charm/update | bash
 
-# установим ssh
-curl -s https://raw.githubusercontent.com/LeKovr/dish/master/charm/ssh | bash
+# stop on error
+set -e
+
+# https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04
+
+# Enable swap
+SWAP=/swapfile
+[ -f \$SWAP ] || {
+  fallocate -l 4G \$SWAP
+  chmod 600 \$SWAP
+  mkswap \$SWAP
+  swapon \$SWAP
+  echo "\$SWAP   none    swap    sw    0   0" >> /etc/fstab
+}
+
+# Other tuning
+grep vm.swappiness /etc/sysctl.conf || {
+  echo "vm.swappiness=10" >> /etc/sysctl.conf
+  sysctl vm.swappiness=10
+}
+
+grep vfs_cache_pressure /etc/sysctl.conf || {
+  echo "vfs_cache_pressure=50" >> /etc/sysctl.conf
+  sysctl vm.vfs_cache_pressure=50
+}
+
+# --------------------------------------------------------------------
+# Настроить локаль пользователя если необходимо
+locale-gen $LC_NAME
+
+# update debs
+apt-get update
+apt-get upgrade -y
+# apt-get install -y linux-generic linux-headers-generic linux-image-generic
+
 
 # создадим пользователя (op)
-curl -s https://raw.githubusercontent.com/LeKovr/dish/master/charm/user | bash
+NEWUSER=op
+HOMEROOT=/home/app
+HOMEDIR=\$HOMEROOT/\$NEWUSER
+[ -d \$HOMEROOT ] || mkdir \$HOMEROOT
+
+# Check if user exists already
+grep -qe "^\$NEWUSER:" /etc/passwd || useradd -d \$HOMEDIR -m -r -s /bin/bash -Gwww-data -gusers -gdocker \$NEWUSER
+[ -d \$HOMEDIR/.ssh ] || sudo -u \$NEWUSER mkdir -m 700 \$HOMEDIR/.ssh
+
+KEYFILE=\$HOMEDIR/.ssh/authorized_keys
+if [ ! -f \$KEYFILE ] ; then
+  cp /root/.ssh/authorized_keys \$KEYFILE
+  chown \$NEWUSER \$KEYFILE
+  chmod 600 \$KEYFILE
+fi
+
+# allow sudo without pass
+[ -f /etc/sudoers.d/\$NEWUSER ] || {
+  echo "\$NEWUSER ALL=NOPASSWD:ALL" > /etc/sudoers.d/\$NEWUSER
+  chmod 440 /etc/sudoers.d/\$NEWUSER
+}
+
+# UFW on
+ufw allow OpenSSH
+echo 'y' | ufw enable
+
+# Deny root login via ssh
+sed -i "/^PermitRootLogin.*/c PermitRootLogin no" /etc/ssh/sshd_config
+
+# Deny password login
+sed -i "/#PasswordAuthentication *yes/c PasswordAuthentication no" /etc/ssh/sshd_config
+
+service ssh reload
+
+# Install fidm
+
+FIDM_VER=v0.1 \
+  && curl -o /usr/local/bin/fidm \
+          -SL https://raw.githubusercontent.com/LeKovr/fidm/${FIDM_VER}/fidm.sh \
+  && chmod +x /usr/local/bin/fidm
 
 EOF
 
@@ -125,7 +203,7 @@ CFGHOST=$hname
 ADMIN="op"
 
 # gitolite notification email(s)
-WATCHERS="admin@jast.ru"
+WATCHERS="$watcher"
 
 EOF
 
@@ -155,7 +233,7 @@ cat <<EOF
 
 После выполнения git push содержимое проекта будет развернуто в каталоге
 /home/app/srv/mail/master
-и, если там буде тайл setup.sh, он будет выполнен.
+и, если там будет файл setup.sh, он будет выполнен.
 
 Для того, чтобы при push отправлялось почтовое уведомление,
 необходимо настроить отправку почты.
@@ -185,7 +263,7 @@ git push origin master
 
   read -p "[Hit Enter to continue]" X
 
-ssh op@$hname sudo docker logs $(sudo docker ps -q)
+ssh op@$hname 'docker logs $(sudo docker ps -q)'
 
   read -p "[Hit Enter to continue]" X
 
